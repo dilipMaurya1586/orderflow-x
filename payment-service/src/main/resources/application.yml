@@ -21,6 +21,11 @@ spring:
 
   kafka:
     bootstrap-servers: localhost:9092
+    admin:
+      fail-fast: false
+      properties:
+        request.timeout.ms: 5000
+        default.api.timeout.ms: 5000
     consumer:
       group-id: ${spring.application.name}
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
@@ -44,3 +49,7 @@ management:
   endpoint:
     health:
       show-details: always
+
+razorpay:
+  key-id: rzp_test_mock_key
+  key-secret: mock_secret_key

@@ -1,6 +1,5 @@
 package com.ecommerce.paymentservice.controller;
 
-
 import com.ecommerce.paymentservice.model.Payment;
 import com.ecommerce.paymentservice.service.PaymentService;
 import lombok.RequiredArgsConstructor;
@@ -16,9 +15,14 @@ public class PaymentController {
 
     private final PaymentService paymentService;
 
-    @PostMapping("/process")
-    public ResponseEntity<Payment> processPayment(@RequestBody Map<String, Object> request) {
-        return ResponseEntity.ok(paymentService.processPayment(request));
+    @PostMapping("/create-order")
+    public ResponseEntity<Map<String, Object>> createOrder(@RequestBody Map<String, Object> request) {
+        return ResponseEntity.ok(paymentService.createRazorpayOrder(request));
+    }
+
+    @PostMapping("/verify")
+    public ResponseEntity<Payment> verifyPayment(@RequestBody Map<String, Object> request) {
+        return ResponseEntity.ok(paymentService.verifyAndSavePayment(request));
     }
 
     @PostMapping("/refund/{orderId}")

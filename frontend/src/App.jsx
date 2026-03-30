@@ -23,7 +23,7 @@ function App() {
   if (loading) return <Loader />
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900 dark:text-white">
       <Navbar />
       <main className="flex-grow container-custom py-8">
         <Routes>

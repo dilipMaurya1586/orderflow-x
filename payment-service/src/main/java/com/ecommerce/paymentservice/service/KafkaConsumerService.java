@@ -1,6 +1,5 @@
 package com.ecommerce.paymentservice.service;
 
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -24,17 +23,11 @@ public class KafkaConsumerService {
             boolean success = event.get("success").asBoolean();
 
             if (success) {
-                System.out.println("💳 Processing payment for order: " + orderId);
-                // Process payment
-                paymentService.processPayment(Map.of(
-                        "orderId", orderId,
-                        "userEmail", event.get("userEmail").asText(),
-                        "amount", event.get("amount").asDouble()
-                ));
-                System.out.println("✅ Payment successful for order: " + orderId);
+                System.out.println("💳 Razorpay order will be initiated by user for order: " + orderId);
+                // Razorpay checkout user ke through hota hai - Kafka mein sirf log karo
             }
         } catch (Exception e) {
-            System.err.println("❌ Error processing payment: " + e.getMessage());
+            System.err.println("❌ Error processing event: " + e.getMessage());
         }
     }
 }

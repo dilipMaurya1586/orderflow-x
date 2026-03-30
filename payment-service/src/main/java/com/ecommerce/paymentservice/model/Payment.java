@@ -15,6 +15,8 @@ public class Payment {
 
     private String paymentId;
     private String orderId;
+    private String razorpayOrderId;
+    private String razorpayPaymentId;
     private String userEmail;
     private Double amount;
     private String status; // SUCCESS, FAILED, REFUNDED

@@ -24,7 +24,6 @@ public class OrderService {
     private String inventoryServiceUrl;
 
     public OrderResponse createOrder(OrderRequest request) {
-        // Create order
         Order order = new Order();
         order.setProductCode(request.getProductCode());
         order.setQuantity(request.getQuantity());
@@ -33,21 +32,24 @@ public class OrderService {
         order.setPhone(request.getPhone());
         order.setFullName(request.getFullName());
 
-        // Get price from inventory
         Double price = getProductPrice(request.getProductCode());
         order.setTotalPrice(price * request.getQuantity());
         order.setStatus("PENDING");
 
         orderRepository.save(order);
 
-        // Send Kafka event - Send as individual parameters
-        kafkaProducerService.sendOrderCreatedEvent(
-                order.getOrderId(),
-                request.getProductCode(),
-                request.getQuantity(),
-                order.getTotalPrice(),
-                request.getUserEmail()
-        );
+        // Kafka optional — agar nahi chala toh order fail nahi hoga
+        try {
+            kafkaProducerService.sendOrderCreatedEvent(
+                    order.getOrderId(),
+                    request.getProductCode(),
+                    request.getQuantity(),
+                    order.getTotalPrice(),
+                    request.getUserEmail()
+            );
+        } catch (Exception e) {
+            System.err.println("⚠️ Kafka event failed (non-critical): " + e.getMessage());
+        }
 
         return new OrderResponse(order.getOrderId(), "PENDING", "Order created, processing...");
     }
@@ -69,5 +71,12 @@ public class OrderService {
 
     public List<Order> getOrdersByUser(String email) {
         return orderRepository.findByUserEmail(email);
+    }
+
+    public Order updateOrderStatus(String orderId, String status) {
+        Order order = orderRepository.findByOrderId(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+        order.setStatus(status);
+        return orderRepository.save(order);
     }
 }

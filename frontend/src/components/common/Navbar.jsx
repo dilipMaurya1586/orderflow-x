@@ -1,8 +1,9 @@
 import { Link, useNavigate } from 'react-router-dom'
-import { ShoppingCart, User, LogOut, Menu, X, Search, Heart } from 'lucide-react'  // ✅ Added Heart
 import { useState } from 'react'
 import { useAuth } from '../../hooks/useAuth'
 import { useCart } from '../../hooks/useCart'
+import { ShoppingCart, User, Menu, X, Search, Heart, Moon, Sun, LogOut} from 'lucide-react'
+import { useTheme } from '../../context/ThemeContext'
 
 export default function Navbar() {
   const { user, logout } = useAuth()
@@ -11,6 +12,7 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [profileMenuOpen, setProfileMenuOpen] = useState(false)
+  const { darkMode, setDarkMode } = useTheme()
 
   const categories = [
     { name: 'Fashion', slug: 'fashion' },
@@ -71,6 +73,13 @@ export default function Navbar() {
                 <Heart size={22} />
               </Link>
             )}
+
+            <button
+              onClick={() => setDarkMode(!darkMode)}
+              className="hover:text-accent transition p-1"
+            >
+              {darkMode ? <Sun size={20} /> : <Moon size={20} />}
+            </button>
 
             <Link to="/cart" className="relative hover:text-accent transition">
               <ShoppingCart size={22} />

@@ -1,92 +1,107 @@
 import { useState, useEffect } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
 const slides = [
   {
     id: 1,
-    image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200&h=300&fit=crop',
-    title: 'Up to 58% higher FPS',
-    subtitle: 'Intel-powered gaming laptops',
-    cta: 'Shop now',
-    bgColor: 'from-blue-600 to-purple-600'
+    image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1400&h=500&fit=crop',
+    title: 'Up to 58% Higher FPS',
+    subtitle: 'Intel-powered gaming laptops — built to dominate',
+    cta: 'Shop Now',
+    link: '/category/electronics',
+    bgColor: 'from-blue-900/80 to-purple-900/60'
   },
   {
     id: 2,
-    image: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1200&h=300&fit=crop',
-    title: 'Fresh look, Sharp fit',
-    subtitle: 'Min. 70% Off',
-    cta: 'Grab now',
-    bgColor: 'from-pink-600 to-orange-600'
+    image: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1400&h=500&fit=crop',
+    title: 'Fresh Look, Sharp Fit',
+    subtitle: 'Minimum 70% Off on top fashion brands',
+    cta: 'Grab Now',
+    link: '/category/fashion',
+    bgColor: 'from-pink-900/80 to-orange-900/60'
   },
   {
     id: 3,
-    image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=1200&h=300&fit=crop',
+    image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=1400&h=500&fit=crop',
     title: 'Premium Headphones',
-    subtitle: 'Up to 40% Off',
-    cta: 'Shop now',
-    bgColor: 'from-green-600 to-teal-600'
+    subtitle: 'Immersive sound — Up to 40% Off',
+    cta: 'Shop Now',
+    link: '/category/electronics',
+    bgColor: 'from-green-900/80 to-teal-900/60'
   },
   {
     id: 4,
-    image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=1200&h=300&fit=crop',
+    image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=1400&h=500&fit=crop',
     title: 'Smart Watches',
-    subtitle: 'Track your fitness',
+    subtitle: 'Track your fitness & style',
     cta: 'Explore',
-    bgColor: 'from-gray-800 to-gray-600'
+    link: '/category/mobiles',
+    bgColor: 'from-gray-900/80 to-slate-800/60'
   }
 ]
 
 export default function HeroCarousel() {
   const [currentIndex, setCurrentIndex] = useState(0)
+  const [animating, setAnimating] = useState(false)
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % slides.length)
-    }, 3000)
+    const interval = setInterval(() => goToNext(), 4000)
     return () => clearInterval(interval)
   }, [])
 
-  const goToPrevious = () => {
-    setCurrentIndex((prev) => (prev - 1 + slides.length) % slides.length)
+  const goTo = (idx) => {
+    if (animating) return
+    setAnimating(true)
+    setCurrentIndex(idx)
+    setTimeout(() => setAnimating(false), 500)
   }
 
-  const goToNext = () => {
-    setCurrentIndex((prev) => (prev + 1) % slides.length)
-  }
+  const goToPrevious = () => goTo((currentIndex - 1 + slides.length) % slides.length)
+  const goToNext = () => goTo((currentIndex + 1) % slides.length)
 
-  const currentSlide = slides[currentIndex]
+  const slide = slides[currentIndex]
 
   return (
-    <div className="relative rounded-xl overflow-hidden mb-8 group">
-      <div className="relative h-64 md:h-80 lg:h-96">
+    <div className="relative rounded-2xl overflow-hidden mb-8 group shadow-xl">
+      <div className="relative h-64 md:h-80 lg:h-[420px]">
         <img
-          src={currentSlide.image}
-          alt={currentSlide.title}
-          className="w-full h-full object-cover"
+          key={slide.id}
+          src={slide.image}
+          alt={slide.title}
+          className={`w-full h-full object-cover transition-opacity duration-500 ${animating ? 'opacity-70' : 'opacity-100'}`}
         />
-        <div className={`absolute inset-0 bg-gradient-to-r ${currentSlide.bgColor} bg-opacity-70 flex items-center`}>
-          <div className="container-custom">
-            <div className="max-w-md text-white">
-              <h2 className="text-3xl md:text-4xl font-bold mb-2">{currentSlide.title}</h2>
-              <p className="text-lg mb-4">{currentSlide.subtitle}</p>
-              <button className="bg-white text-dark px-6 py-2 rounded-lg font-semibold hover:bg-opacity-90 transition">
-                {currentSlide.cta}
-              </button>
+        <div className={`absolute inset-0 bg-gradient-to-r ${slide.bgColor} flex items-center`}>
+          <div className="px-8 md:px-16">
+            <div className="max-w-lg text-white">
+              <p className="text-accent text-sm font-semibold uppercase tracking-widest mb-2">
+                Limited Offer
+              </p>
+              <h2 className="text-3xl md:text-5xl font-bold mb-3 leading-tight">
+                {slide.title}
+              </h2>
+              <p className="text-white/80 text-lg mb-6">{slide.subtitle}</p>
+              <Link
+                to={slide.link}
+                className="inline-block bg-accent hover:bg-orange-500 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-200 hover:scale-105 shadow-lg"
+              >
+                {slide.cta} →
+              </Link>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Navigation Buttons */}
+      {/* Nav Buttons */}
       <button
         onClick={goToPrevious}
-        className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 opacity-0 group-hover:opacity-100 transition"
+        className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 backdrop-blur-sm text-white rounded-full p-2 opacity-0 group-hover:opacity-100 transition"
       >
         <ChevronLeft size={24} />
       </button>
       <button
         onClick={goToNext}
-        className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 opacity-0 group-hover:opacity-100 transition"
+        className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 backdrop-blur-sm text-white rounded-full p-2 opacity-0 group-hover:opacity-100 transition"
       >
         <ChevronRight size={24} />
       </button>
@@ -96,10 +111,8 @@ export default function HeroCarousel() {
         {slides.map((_, idx) => (
           <button
             key={idx}
-            onClick={() => setCurrentIndex(idx)}
-            className={`w-2 h-2 rounded-full transition ${
-              idx === currentIndex ? 'bg-white w-4' : 'bg-white/50'
-            }`}
+            onClick={() => goTo(idx)}
+            className={`h-2 rounded-full transition-all duration-300 ${idx === currentIndex ? 'bg-accent w-6' : 'bg-white/50 w-2'}`}
           />
         ))}
       </div>

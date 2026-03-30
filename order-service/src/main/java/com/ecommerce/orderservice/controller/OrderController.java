@@ -17,10 +17,14 @@ public class OrderController {
 
     private final OrderService orderService;
 
-
     @PostMapping("/create")
     public ResponseEntity<OrderResponse> createOrder(@RequestBody OrderRequest request) {
         return ResponseEntity.ok(orderService.createOrder(request));
+    }
+
+    @GetMapping("/user")
+    public ResponseEntity<List<Order>> getUserOrders(@RequestParam String email) {
+        return ResponseEntity.ok(orderService.getOrdersByUser(email));
     }
 
     @GetMapping("/{orderId}")
@@ -28,9 +32,11 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getOrder(orderId));
     }
 
-    // ✅ ADD THIS ENDPOINT
-    @GetMapping("/user")
-    public ResponseEntity<List<Order>> getUserOrders(@RequestParam String email) {
-        return ResponseEntity.ok(orderService.getOrdersByUser(email));
+    @PutMapping("/{orderId}/status")
+    public ResponseEntity<Order> updateStatus(
+            @PathVariable String orderId,
+            @RequestParam String status) {
+        return ResponseEntity.ok(orderService.updateOrderStatus(orderId, status));
     }
+
 }
